@@ -227,17 +227,22 @@ pompCompile <- function (fname, direc, src, shlib.args = NULL, verbose) {
           command=R.home("bin/R"),
           args=c("CMD","SHLIB","-o",solib,modelfile,shlib.args),
           env=cflags,
-          stdout=if (verbose | .Platform$OS.type=="windows") "" else NULL
+          stdout=TRUE,
+          stderr=TRUE
         )
       },
       error = function (e) {
         stop("error compiling Csnippets: ",conditionMessage(e),call.=FALSE) #nocov
       }
     )
-    if (rv!=0)
-        stop("cannot compile shared-object library ",sQuote(solib),call.=FALSE)
-    else if (verbose)
+    stat <- as.integer(attr(rv,"status"))
+    if (length(stat)>0 && stat != 0) 
+        stop("cannot compile shared-object library ",sQuote(solib),"\nstatus:",stat,
+             "\n",as.character(rv),call.=FALSE)
+    else if (verbose) {
+        cat("compiler messages:\n",rv,"\n")
         cat("link to shared-object library",sQuote(solib),"\n")
+    }
 
     invisible(solib)
 }
