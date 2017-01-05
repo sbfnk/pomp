@@ -1,9 +1,9 @@
 capture.output({
 
     library(pomp)
-    
+
     options(digits=3,verbose=TRUE)
-    
+
     set.seed(398585L)
     pompExample(ou2)
 
@@ -78,3 +78,9 @@ stopifnot(sum(grepl("prior.mean",out))==78)
 stopifnot(sum(grepl("effective sample size",out))==74)
 stopifnot(sum(grepl("mif2 iteration",out))==10)
 stopifnot(sum(grepl("h in",out))==1)
+
+capture.output({
+  pompExample(dacca)
+}) -> out
+stopifnot(sum(grepl("compiler",out))==1)
+stopifnot(sum(grepl("link to shared-object library",out))==1)
